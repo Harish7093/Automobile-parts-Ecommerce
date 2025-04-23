@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css " rel="stylesheet">
+    <link href="./styles/cart.css" rel="stylesheet">
+    <link href="./styles/navbar.css" rel="stylesheet">
+    <link href="./styles/footer.css" rel="stylesheet">
+    <title>Cart</title>
+    <!-- Add QR Code library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div id="main-container">
+        <div id="navbar"></div>
+
+        <!-- cart items -->
+        <div id="cart-container">
+            <section id="heading">
+                <h2 style="text-align: center;margin-top: 20px;">Shopping Cart</h2>
+                <hr>
+            </section>
+            <section id="cart-items">
+                <table width="100%" class="container my-5">
+                    <thead>
+                        <tr>
+                            <td>Product Image</td>
+                            <td>Product</td>
+                            <td>Quantity</td>
+                            <td>Original Price</td>
+                            <td>Discount Price</td>
+                            <td>Remove</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Cart items will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </section>
+
+            <div id="Empty_Display" style="display: none;">
+                <div id="emptyDisplay" class="no-item">
+                    <img src="https://images.bewakoof.com/images/doodles/empty-cart-page-doodle.png" alt="empty-bag" style="width: 150px;" />
+                    <p>Nothing in the bag</p>
+                    <a id="continuetohome" href="/index.html">Continue Shopping</a>
+                </div>
+            </div>
+
+            <section id="cart-bottom" class="container" style="display: none;">
+                <!-- Cart bottom section will be dynamically inserted here -->
+            </section>
+        </div>
+
+        <div id="footer"></div>
+    </div>
+
+    <!-- Coupon Popup -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <h3>Coupon Applied Successfully!</h3>
+            <p>Your discount has been applied to your order.</p>
+            <button id="ok_btn">OK</button>
+        </div>
+    </div>
+
+    <div id="popup1" class="popup">
+        <div class="popup-content">
+            <h3>Invalid Coupon Code!</h3>
+            <p>Please enter a valid coupon code.</p>
+            <button id="ok_btn1">OK</button>
+        </div>
+    </div>
+
+    <script type="module" src="./scripts/cart.js"></script>
+</body>
+</html>

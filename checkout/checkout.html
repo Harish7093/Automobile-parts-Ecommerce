@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css " rel="stylesheet">
+  <link rel="stylesheet" href="../styles/checkout.css">
+  <link rel="stylesheet" href="../styles/navbar.css">
+  <link rel="stylesheet" href="../styles/footer.css">
+</head>
+<body>
+  <div id="navbar">
+
+  </div>
+  <div id="container">
+    <form action="">
+      <div id="parent">
+        <div id="addressdetail">
+          <div class="heding">
+            <h2><i class="fa-regular fa-address-card"></i> CONTACT DETAILS</h2>
+          </div>
+
+          <input id="name" type="text" placeholder="Full Name" />
+          <input id="phoneno" type="text" placeholder="Mobile No" />
+          <div class="heding">
+            <h2><i class="fa-regular fa-address-book"></i> ADDRESS</h2>
+          </div>
+
+          <input id="fulladdress" type="text" placeholder="Full Address(House no,area/street etc.)" />
+          <input id="town" type="text" placeholder="Locality/Town" />
+          <input id="distric" type="text" placeholder="District" />
+          <input id="pincode" type="number" placeholder="Pin Code" />
+          <input id="state" type="text" placeholder="State" />
+        </div>
+        <div id="paymentdetails">
+          <!-- <div class="heding">
+              <h2><i class="fa-solid fa-wallet "></i>  PAYMENT</h2>
+            </div>
+            
+            <div>
+              <p>Subtotal</p>
+              <p>₹2000</p>
+            </div>
+            <div>
+              <p>Convenience Fees</p>
+              <p id="convinientfee">₹99</p>
+            </div>
+            <div>
+              <p>Shipping Cost</p>
+              <p>₹20</p>
+            </div>
+            <hr />
+            <div>
+              <p>Total</p>
+              <p>₹2020</p>
+            </div>
+            <div>
+              <button id="orderBtn" ><h2>Place Order</h2></button>
+            </div> -->
+        </div>
+      </div>
+
+      <p id="error">*Please fill out all the field </p>
+    </form>
+  </div>
+  <div id="footer">
+
+  </div>
+
+</body>
+</html>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script type="module">
+  import API, { RAZORPAY_KEY_ID } from "../components/api.js";
+  import {
+    top_navbar,
+    middle_navbar,
+    bottom_navbar,
+  } from "../components/navbar.js";
+  import { getFooter } from "../components/footer.js";
+
+  window.onload = async () => {
+    // Initialize navbar and footer
+    const nav = document.querySelector("#navbar");
+    nav.innerHTML = top_navbar() + middle_navbar(true);
+    const footer = document.querySelector("#footer");
+    footer.innerHTML = getFooter();
+
+    // Update cart count
+    const item_cart = document.querySelector("#item_count_cart");
+    let cartItems = localStorage.getItem("cart-total-items") || 0;
+    if (!(cartItems == 0 || cartItems == null)) {
+      item_cart.textContent = cartItems;
+      item_cart.style.display = "flex";
+    }
+
+    // Load and display payment details
+    await updatePaymentDetails();
+  };
+
+  async function updatePaymentDetails() {
+    try {
+      const userId = localStorage.getItem("userid");
+      if (!userId) {
+        window.location.href = "/signin.html";
+        return;
+      }
+
+      // Fetch cart items
+      const response = await fetch(`${API}/users/${userId}`);
+      const userData = await response.json();
+      const cartItems = userData.cart || [];
+
+      // Calculate totals
+      const subtotal = cartItems.reduce((total, item) => {
+        return total + (item.discounted_price * (item.quantity || 1));
+      }, 0);
+
+      const convenienceFee = 99;
+      const shippingCost = 20;
+      const total = subtotal + convenienceFee + shippingCost;
+
+      // Update payment details display
+      let pay_data = document.getElementById("paymentdetails");
+      pay_data.innerHTML = `
+        <div class="heding">
+          <h2><i class="fa-solid fa-wallet"></i> PAYMENT</h2>
+        </div>
+        <div>
+          <p>Subtotal</p>
+          <p>₹${subtotal}</p>
+        </div>
+        <div>
+          <p>Convenience Fee</p>
+          <p>₹${convenienceFee}</p>
+        </div>
+        <div>
+          <p>Shipping Cost</p>
+          <p>₹${shippingCost}</p>
+        </div>
+        <hr />
+        <div>
+          <p>Total</p>
+          <p>₹${total}</p>
+        </div>
+        <div>
+          <button id="orderBtn"><h2>Place Order</h2></button>
+        </div>`;
+
+      // Store total amount for later use
+      localStorage.setItem("Total_Amount", total);
+
+      // Setup Razorpay
+      setupRazorpay(total);
+    } catch (error) {
+      console.error("Error updating payment details:", error);
+      alert("Error loading cart details. Please try again.");
+    }
+  }
+
+  function setupRazorpay(total) {
+    const options = {
+      key: RAZORPAY_KEY_ID,
+      amount: total * 100, // Razorpay expects amount in paise
+      currency: "INR",
+      name: "Auto-Tech Hub",
+      description: "Auto Parts Purchase",
+      image: "https://media.istockphoto.com/id/1034249292/photo/set-of-car-parts-isolated-on-white-background-3d.jpg?s=612x612&w=0&k=20&c=BwXl3LzQau4v40nl9INYToE0mC1SYDA4gBkylspbYis=",
+      handler: async function (response) {
+        try {
+          // Verify payment
+          const verificationResponse = await fetch(`${API}/verify-payment`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            }),
+          });
+
+          if (!verificationResponse.ok) {
+            throw new Error("Payment verification failed");
+          }
+
+          // Store transaction ID
+          localStorage.setItem("txn_id", response.razorpay_payment_id);
+
+          // Save order details
+          await saveOrderDetails(response.razorpay_payment_id);
+
+          // Redirect to confirmation page
+          window.location.href = "./orderconfirmation.html";
+        } catch (error) {
+          console.error("Payment processing error:", error);
+          alert("Payment processing failed. Please try again.");
+        }
+      },
+      prefill: {
+        name: document.getElementById("name")?.value || "",
+        email: localStorage.getItem("userEmail") || "",
+        contact: document.getElementById("phoneno")?.value || "",
+      },
+      theme: {
+        color: "#F3B609"
+      }
+    };
+
+    const rzp = new Razorpay(options);
+
+    document.getElementById("orderBtn").onclick = async function (e) {
+      e.preventDefault();
+      
+      // Validate form fields
+      const name = document.querySelector('#name').value;
+      const phoneno = document.querySelector('#phoneno').value;
+      const address = document.querySelector('#fulladdress').value;
+      const town = document.querySelector('#town').value;
+      const distric = document.querySelector('#distric').value;
+      const pincode = document.querySelector('#pincode').value;
+      const state = document.querySelector('#state').value;
+
+      if (name && phoneno && address && town && distric && pincode && state) {
+        document.querySelector("#error").style.display = "none";
+        
+        try {
+          // Save address first
+          await saveAddress();
+          // Open Razorpay
+          rzp.open();
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Error processing your order. Please try again.");
+        }
+      } else {
+        document.querySelector("#error").style.display = "block";
+      }
+    };
+  }
+
+  async function saveAddress() {
+    const addressData = {
+      name: document.querySelector('#name').value,
+      phone: document.querySelector('#phoneno').value,
+      address: document.querySelector('#fulladdress').value,
+      locality: document.querySelector('#town').value,
+      district: document.querySelector('#distric').value,
+      pincode: document.querySelector('#pincode').value,
+      state: document.querySelector('#state').value
+    };
+
+    try {
+      const userId = localStorage.getItem("userid");
+      const response = await fetch(`${API}/users/${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          addresses: [addressData]
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save address");
+      }
+    } catch (error) {
+      console.error("Error saving address:", error);
+      throw error;
+    }
+  }
+
+  async function saveOrderDetails(paymentId) {
+    try {
+      const userId = localStorage.getItem("userid");
+      const total = localStorage.getItem("Total_Amount");
+      
+      const orderData = {
+        userId: userId,
+        paymentId: paymentId,
+        amount: parseInt(total),
+        status: "confirmed",
+        date: new Date().toISOString(),
+        address: {
+          name: document.querySelector('#name').value,
+          phone: document.querySelector('#phoneno').value,
+          address: document.querySelector('#fulladdress').value,
+          locality: document.querySelector('#town').value,
+          district: document.querySelector('#distric').value,
+          pincode: document.querySelector('#pincode').value,
+          state: document.querySelector('#state').value
+        }
+      };
+
+      // Save order
+      const orderResponse = await fetch(`${API}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!orderResponse.ok) {
+        throw new Error("Failed to save order");
+      }
+
+      // Clear cart
+      await fetch(`${API}/users/${userId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cart: [] }),
+      });
+
+      // Clear local storage cart data
+      localStorage.removeItem("cart-total-items");
+      localStorage.removeItem("cart");
+
+    } catch (error) {
+      console.error("Error saving order:", error);
+      throw error;
+    }
+  }
+</script>

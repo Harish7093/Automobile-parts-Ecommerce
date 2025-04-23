@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmation - Auto Parts Shop</title>
+  <link rel="stylesheet" href="../styles/orderconfirmation.css" />
+  <link rel="stylesheet" href="../styles/navbar.css">
+  <link rel="stylesheet" href="../styles/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <div id="parent"></div>
+  <div id="footer"></div>
+</body>
+</html>
+<script type="module">
+  import API from '/components/api.js';
+
+  window.onload = async () => {
+    // Load navbar and footer
+    const navbarResponse = await fetch('/navbar.html');
+    const footerResponse = await fetch('/footer.html');
+    
+    document.getElementById('navbar').innerHTML = await navbarResponse.text();
+    document.getElementById('footer').innerHTML = await footerResponse.text();
+    
+    // Load order data
+    getdata();
+  }
+
+  async function getdata() {
+    try {
+      const userId = localStorage.getItem('userid') || '1';
+      const paymentId = localStorage.getItem('txn_id');
+      
+      if (!paymentId) {
+        throw new Error('No payment ID found');
+      }
+
+      // Fetch order details
+      const orderResponse = await fetch(`${API}/orders?userId=${userId}&paymentId=${paymentId}`);
+      const orders = await orderResponse.json();
+      const order = orders[0];
+
+      if (!order) {
+        throw new Error('Order not found');
+      }
+
+      document.querySelector("#parent").innerHTML = `
+        <div id="part1">
+          <div>
+            <i class="fas fa-check-circle" style="font-size: 100px; color: #4CAF50;"></i>
+            <h1>Thank You For Your Order!</h1>
+            <p>Good news, <span id="name">${order.address.name}</span>! Your order has been confirmed and will be shipped soon.</p>
+          </div>
+        </div>
+        <div id="part2">
+          <div>
+            <h3>ORDER DETAILS</h3>
+            <p>Order ID: ${order.paymentId}</p>
+            <p>Date: ${new Date(order.date).toLocaleDateString()}</p>
+            <p>Total Amount: ₹${order.amount}</p>
+          </div>
+          <div>
+            <h3>SHIPPING ADDRESS</h3>
+            <p id="address">
+              ${order.address.name}<br>
+              ${order.address.address}<br>
+              ${order.address.locality}, ${order.address.district}<br>
+              ${order.address.state} - ${order.address.pincode}<br>
+              Phone: ${order.address.phone}
+            </p>
+          </div>
+        </div>
+        <p id="timer" class="timer">Redirecting in 5 sec</p>`;
+
+      // Clear cart data
+      localStorage.removeItem("cart-total-items");
+      localStorage.removeItem("cart");
+      
+      // Start countdown
+      let count = 5;
+      const interval = setInterval(() => {
+        count--;
+        const timer = document.querySelector("#timer");
+        if (timer) {
+          timer.innerText = `Redirecting in ${count} sec`;
+        }
+        if (count <= 0) {
+          clearInterval(interval);
+          window.location.assign('/index.html');
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error in order confirmation:', error);
+      document.querySelector("#parent").innerHTML = `
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle" style="font-size: 50px; color: #f44336;"></i>
+          <h2>Oops! Something went wrong</h2>
+          <p>We couldn't load your order details. Please try refreshing the page.</p>
+          <button onclick="window.location.reload()">Refresh Page</button>
+        </div>
+      `;
+    }
+  }
+</script>

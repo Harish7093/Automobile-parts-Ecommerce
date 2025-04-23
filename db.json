@@ -1,0 +1,113 @@
+{
+  "users": [],
+
+  "products": [],
+
+  "category": [
+    {
+      "image_url": "https://res.cloudinary.com/dkliqwzoi/image/upload/v1691391965/autopart/Lamborghini_Aventador_Yellow_563347_1280x640-removebg-preview_mabjpo.png",
+      "name": "Exterior"
+    },
+    {
+      "image_url": "https://m.media-amazon.com/images/I/51J5impF5kL._AC._SR240,240.jpg",
+      "name": "Interior"
+    },
+    {
+      "image_url": "https://images-eu.ssl-images-amazon.com/images/G/31/img17/Auto/July/carpartsstore/1057312_C1-670x581.jpg",
+      "name": "wheels and tyres"
+    },
+    {
+      "image_url": "https://m.media-amazon.com/images/I/7154oduVFOL._AC_UL320_.jpg",
+      "name": "Car body parts"
+    },
+    {
+      "image_url": "https://m.media-amazon.com/images/I/61aBH+cXL2L._AC_UY218_.jpg",
+      "name": "Electronics"
+    },
+    {
+      "image_url": "https://m.media-amazon.com/images/I/610gNDaoRiS._AC_UL320_.jpg",
+      "name": "Tools and Garage"
+    },
+    {
+      "image_url": "https://n4.sdlcdn.com/imgs/k/k/v/large/Leavess-9-LED-Fog-Light-SDL854731317-1-619c9.webp",
+      "name": "Lamp Bulb DRL's"
+    },
+    {
+      "image_url": "https://n4.sdlcdn.com/imgs/k/l/i/large/PENYAN-Front-Brake-Pad-For-SDL968244591-1-15ab8.webp",
+      "name": "Brake Parts"
+    },
+    {
+      "image_url": "https://n2.sdlcdn.com/imgs/k/n/b/large/Penyan-46-in-1-Pcs-SDL104623110-1-4166e.webp",
+      "name": "Breakdown Solutions"
+    }
+  ],
+  "featured_products": [
+    {
+      "id": 1,
+      "name": "CRUST CS30 Car Bluetooth Device with Call Receiver, FM Transmitter for Music System & Dual USB + Type C Fast Charger; 7 Colour LED Lights; 6 Equalizer Presets",
+      "image_url": "https://n4.sdlcdn.com/imgs/k/b/y/large/Crust-Black-Bluetooth-Device-SDL029208845-1-14527.webp"
+    },
+    {
+      "id": 2,
+      "name": "HOMETALES - Grey Car Body Cover For Mahindra Xylo Without Mirror Pocket (Pack Of1)",
+      "image_url": "https://n1.sdlcdn.com/imgs/k/k/v/large/HOMETALES-Grey-Car-Body-Cover-SDL055874052-1-81bda.jpeg"
+    },
+    {
+      "id": 3,
+      "name": "AUTOPOWERZ 2 Led OWL Shape Fog Yellow-White light Low & High Beam for universal",
+      "image_url": "https://n4.sdlcdn.com/imgs/k/n/e/large/AUTOPOWERZ-2-Led-OWL-Shape-SDL188243727-1-e879b.jpeg"
+    },
+    {
+      "id": 4,
+      "name": "AutoPowerz - Front Head Light For All Car and Bike Models ( Single )",
+      "image_url": "https://n1.sdlcdn.com/imgs/k/j/b/large/AutoPowerz-Front-Head-Light-For-SDL270847579-1-4d65b.webp"
+    }
+  ],
+  "blogs": [
+    {
+      "id": 1,
+      "category": "exterior",
+      "category_display": "Exterior",
+      "name": "Top Ford Ranger Products For Fall",
+      "image_url": "https://img-ik.cars.co.za/ik-seo/carsimages/7663936/2019-Ford-Ranger-20D-Bi-Turbo-Raptor-4x4-Auto-Double-Cab.jpg?v=1179341415&tr=h-450%2Cw-600",
+      "data": "14 Dec"
+    },
+    {
+      "id": 2,
+      "category": "wheels and tyres",
+      "category_display": "wheels and tyres",
+      "image_url": "https://media.solvay.com/medias/domain1446/media1148/182194-u8hwjc47do.jpg",
+      "name": "headline options for 2018-2020 F150s",
+      "data": "14 Dec"
+    },
+    {
+      "id": 3,
+      "category": "interior",
+      "category_display": "Interior",
+      "image_url": "https://www.luxurylifestylemag.co.uk/wp-content/uploads/2020/05/bigstock-131693096-1.jpg",
+      "name": "Top Ford Ranger Products For Fall",
+      "data": "14 Dec"
+    }
+  ],
+  "offers": [
+    {
+      "image_url": "https://blog.bindy.com/wp-content/uploads/2022/10/shutterstock_1124428316-1024x682.jpg",
+      "name": "LIMITED OFFER REPAIR PARTS"
+    },
+    {
+      "image_url": "https://di-uploads-pod14.dealerinspire.com/toyotaoforlando/uploads/2021/08/auto-repairs-1024x683.jpeg",
+      "name": "BODY PART BEST OFFER"
+    }
+  ],
+  "feature_modals": [],
+  "coupons": [
+    {
+      "code": "masai20",
+      "discount": 20
+    },
+    {
+      "code": "free99",
+      "discount": 99
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - Auto Parts Shop</title>
+    <link rel="stylesheet" href="../styles/checkout.css">
+    <link rel="stylesheet" href="../styles/navbar.css">
+    <link rel="stylesheet" href="../styles/footer.css">
+  </head>
+  <body>
+    <div id="navbar"></div>
+    <form action="">
+      <div id="parent">
+        <div id="addressdetail">
+          <h2>CONTACT DETAILS</h2>
+          <input id="name" type="text" placeholder="Full Name" required />
+          <input id="phoneno" type="text" placeholder="Mobile No" required />
+          <h2 style="margin-top: 0%">ADDRESS</h2>
+          <input
+          id="fulladdress"
+            type="text"
+            placeholder="Full Address(House no,area/street etc.)"
+            required
+          />
+          <input id="town" type="text" placeholder="Locality/Town" required />
+          <input id="distric" type="text" placeholder="District" required />
+          <input id="pincode" type="number" placeholder="Pin Code" required />
+          <input id="state" type="text" placeholder="State" required />
+        </div>
+        <div id="paymentdetails">
+          <h2>ORDER SUMMARY</h2>
+          <div>
+            <p>Subtotal</p>
+            <p id="subtotal">₹0</p>
+          </div>
+          <div>
+            <p>Convenience Fees</p>
+            <p id="convinientfee">₹99</p>
+          </div>
+          <div>
+            <p>Shipping Cost</p>
+            <p>₹20</p>
+          </div>
+          <hr />
+          <div>
+            <p>Total</p>
+            <p id="total">₹0</p>
+          </div>
+        </div>
+      </div>
+
+      <button id="orderBtn" type="button"><h2 style="line-height: 8%;">Proceed to Checkout</h2></button>
+      <p id="error">*Please fill out all the fields</p>
+    </form>
+    <div id="footer"></div>
+  </body>
+</html>
+<script type="module">
+  import API from '/components/api.js';
+
+  // Load navbar and footer
+  window.addEventListener('DOMContentLoaded', async () => {
+    const navbarResponse = await fetch('/navbar.html');
+    const footerResponse = await fetch('/footer.html');
+    
+    document.getElementById('navbar').innerHTML = await navbarResponse.text();
+    document.getElementById('footer').innerHTML = await footerResponse.text();
+    
+    // Load cart total
+    loadCartTotal();
+  });
+
+  async function loadCartTotal() {
+    try {
+      const userId = localStorage.getItem('userid') || '1';
+      const response = await fetch(`${API}/users/${userId}`);
+      const data = await response.json();
+      
+      if (data.cart && Array.isArray(data.cart)) {
+        const subtotal = data.cart.reduce((total, item) => {
+          return total + (item.discounted_price * (item.quantity || 1));
+        }, 0);
+        
+        const convenienceFee = 99;
+        const shippingCost = 20;
+        const total = subtotal + convenienceFee + shippingCost;
+        
+        document.getElementById('subtotal').textContent = `₹${subtotal}`;
+        document.getElementById('total').textContent = `₹${total}`;
+      }
+    } catch (error) {
+      console.error('Error loading cart:', error);
+    }
+  }
+  
+  document.getElementById("orderBtn").onclick = async function (e) {
+    e.preventDefault();
+    
+    let name = document.querySelector('#name').value
+    let phoneno = document.querySelector('#phoneno').value
+    let address = document.querySelector('#fulladdress').value
+    let town = document.querySelector('#town').value
+    let distric = document.querySelector('#distric').value
+    let pincode = document.querySelector('#pincode').value
+    let state = document.querySelector('#state').value
+    
+    if (name && phoneno && address && town && distric && pincode && state) {
+      document.querySelector("#error").style.display = "none";
+      
+      try {
+        // Save address
+        await savedata();
+        
+        // Save order details
+        const userId = localStorage.getItem('userid') || '1';
+        const orderDetails = {
+          userId: userId,
+          amount: parseInt(document.getElementById('total').textContent.replace('₹', '')),
+          items: JSON.parse(localStorage.getItem('cart')) || [],
+          address: {
+            name: name,
+            phone: phoneno,
+            address: address,
+            locality: town,
+            district: distric,
+            pincode: pincode,
+            state: state
+          },
+          date: new Date().toISOString()
+        };
+        
+        await fetch(`${API}/orders`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orderDetails)
+        });
+        
+        // Clear cart
+        await fetch(`${API}/users/${userId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ cart: [] })
+        });
+        
+        // Redirect to confirmation
+        location.href = './orderconfirmation.html';
+      } catch (error) {
+        console.error('Error processing order:', error);
+        alert('There was an error processing your order. Please try again.');
+      }
+    } else {
+      document.querySelector("#error").style.display = "block";
+    }
+  };
+
+  async function savedata() {
+    const userId = localStorage.getItem('userid') || '1';
+    let obj = {
+      fullname: document.querySelector('#name').value,
+      mobile_no: document.querySelector('#phoneno').value,
+      full_address: document.querySelector('#fulladdress').value,
+      locality: document.querySelector('#town').value,
+      district: document.querySelector('#distric').value,
+      pin_code: document.querySelector('#pincode').value,
+      state: document.querySelector('#state').value,
+    };
+    
+    try {
+      await fetch(`${API}/users/${userId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ address: obj }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.error('Error saving address:', error);
+      throw error;
+    }
+  }
+</script>

@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Auto-Tech Hub</title>
+    <link rel="stylesheet" href="./styles/profile.css">
+    <link rel="stylesheet" href="./styles/navbar.css">
+    <link rel="stylesheet" href="./styles/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div id="navbar">
+        <!-- Navbar will be loaded here -->
+    </div>
+
+        <div class="profile-container">
+                    <div class="profile-sidebar">
+                        <div class="profile-header">
+                <div class="profile-image">
+                    <img id="userImage" src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="Profile Image">
+                    <button id="changeImage" class="btn-secondary">Change Image</button>
+                </div>
+                <h2 id="userName">Loading...</h2>
+                <p id="userEmail">Loading...</p>
+            </div>
+            <nav class="profile-nav">
+                <ul>
+                    <li class="active" onclick="showSection('personal-info')">
+                        <i class="fas fa-user"></i> Personal Information
+                    </li>
+                    <li onclick="showSection('addresses')">
+                        <i class="fas fa-map-marker-alt"></i> Addresses
+                    </li>
+                    <li onclick="showSection('orders')">
+                        <i class="fas fa-shopping-bag"></i> Orders
+                    </li>
+                    <li onclick="showSection('wishlist')">
+                        <i class="fas fa-heart"></i> Wishlist
+                    </li>
+                    <li onclick="showSection('settings')">
+                        <i class="fas fa-cog"></i> Settings
+                    </li>
+                    <li onclick="logout()" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="profile-content">
+            <div id="personal-info" class="section active">
+                <div class="section-header">
+                    <h2>Personal Information</h2>
+                    <button id="editPersonalInfo" class="btn-primary">Edit</button>
+                </div>
+                <form id="personalInfoForm" class="profile-form">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" required disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Enter new password" disabled>
+                    </div>
+                    <button type="submit" class="btn-primary" disabled>Save Changes</button>
+                </form>
+            </div>
+            <div id="addresses" class="section">
+                <div class="section-header">
+                    <h2>Addresses</h2>
+                    <button onclick="showAddAddressForm()" class="btn-primary">Add New Address</button>
+                </div>
+                <div id="addressList" class="address-grid">
+                    <!-- Addresses will be loaded here -->
+                </div>
+            </div>
+            <div id="orders" class="section">
+                <div class="section-header">
+                    <h2>Orders</h2>
+                </div>
+                <div id="ordersList" class="orders-list">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+            <div id="wishlist" class="section">
+                <div class="section-header">
+                    <h2>Wishlist</h2>
+                </div>
+                <div id="wishlistItems" class="products-grid">
+                    <!-- Wishlist items will be loaded here -->
+                </div>
+            </div>
+            <div id="settings" class="section">
+                <div class="section-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="notifications">Email Notifications</label>
+                        <input type="checkbox" id="notifications">
+                    </div>
+                    <div class="form-group">
+                        <label for="theme">Theme</label>
+                        <select id="theme">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                            </div>
+                    <div class="form-group merchant-toggle">
+                        <label for="merchantMode">Merchant Mode</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="merchantMode" onchange="toggleMerchantMode(this.checked)">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </div>
+                    <div id="merchantPanel" style="display: none;">
+                        <h3>Merchant Tools</h3>
+                        <div class="merchant-actions">
+                            <button onclick="window.location.href='addProduct.html'" class="btn-primary">
+                                <i class="fas fa-plus"></i> Add New Product
+                            </button>
+                           
+                        </div>
+                    </div>
+                    <button onclick="saveSettings()" class="btn-primary">Save Settings</button>
+                </div>
+            </div>
+        </div>
+                            </div>
+
+    <div id="footer">
+        <!-- Footer will be loaded here -->
+                            </div>
+
+    <style>
+    .merchant-toggle {
+        margin: 20px 0;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+        background-color: rgb(243,182,9);
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(26px);
+    }
+
+    #merchantPanel {
+        margin-top: 20px;
+        padding: 20px;
+        background: #f8f8f8;
+        border-radius: 8px;
+    }
+
+    .merchant-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .merchant-actions button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px;
+    }
+
+    .merchant-actions i {
+        font-size: 16px;
+    }
+    </style>
+
+    <script type="module">
+        import API from './components/api.js';
+        import { top_navbar, middle_navbar, bottom_navbar, inputSearchEventListener } from './components/navbar.js';
+        import { searchCardAppend } from './components/search_card.js';
+
+        // Check login status immediately
+        function isUserLoggedIn() {
+            const logged = localStorage.getItem('logged') === 'true';
+            const userId = localStorage.getItem('userid');
+            const userObject = localStorage.getItem('userObject');
+            return logged && userId && userObject;
+        }
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (!isUserLoggedIn()) {
+                alert("Please login to view profile");
+                window.location.href = './signin.html';
+                return;
+            }
+
+            try {
+                // Load navbar
+                const navbar = document.getElementById('navbar');
+                navbar.innerHTML = top_navbar() + middle_navbar() + bottom_navbar();
+
+                // Initialize search functionality
+                const searchAppend = searchCardAppend();
+                const inputListener = inputSearchEventListener(searchAppend, 700);
+                inputListener();
+
+                // Add click event for logo
+                document.getElementById('logo_click').addEventListener('click', () => {
+                    window.location.href = '/index.html';
+                });
+
+                // Add click events for mobile menu
+                const menuIcon = document.getElementById('menu-icon');
+                const sideClose = document.getElementById('side_close');
+                const sidebar = document.getElementById('sidebar');
+                const blackOverlay = document.querySelector('.black');
+
+                if (menuIcon) {
+                    menuIcon.addEventListener('click', () => {
+                        sidebar.classList.remove('hide_sidebar');
+                        blackOverlay.style.display = 'block';
+                    });
+                }
+
+                if (sideClose) {
+                    sideClose.addEventListener('click', () => {
+                        sidebar.classList.add('hide_sidebar');
+                        blackOverlay.style.display = 'none';
+                    });
+                }
+
+                if (blackOverlay) {
+                    blackOverlay.addEventListener('click', () => {
+                        sidebar.classList.add('hide_sidebar');
+                        blackOverlay.style.display = 'none';
+                    });
+                }
+                
+                // Load footer
+                try {
+                    const footerResponse = await fetch('./components/footer.html');
+                    if (!footerResponse.ok) {
+                        throw new Error('Footer not found');
+                    }
+                    document.getElementById('footer').innerHTML = await footerResponse.text();
+                } catch (error) {
+                    console.log('Using default footer');
+                    document.getElementById('footer').innerHTML = `
+                        <footer style="background-color: #f8f8f8; padding: 20px 0; margin-top: 50px; text-align: center;">
+                            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+                                <p>&copy; ${new Date().getFullYear()} Auto-Tech Hub. All rights reserved.</p>
+                            </div>
+                        </footer>
+                    `;
+                }
+                
+                // Load user data
+                await loadUserData();
+                setupEventListeners();
+            } catch (error) {
+                console.error('Error loading page:', error);
+                alert('Failed to load page. Please try again.');
+            }
+        });
+
+        async function loadUserData() {
+            try {
+                const userId = localStorage.getItem('userid');
+                const userObject = JSON.parse(localStorage.getItem('userObject'));
+                
+                if (!userId || !userObject) {
+                    throw new Error('User data not found');
+                }
+
+                // Update profile header
+                document.getElementById('userName').textContent = userObject.name || 'User';
+                document.getElementById('userEmail').textContent = userObject.email || 'No email provided';
+                
+                // Update form fields
+                document.getElementById('fullName').value = userObject.name || '';
+                document.getElementById('email').value = userObject.email || '';
+                document.getElementById('phone').value = userObject.phone || '';
+
+                // Load addresses
+                loadAddresses(userObject.address || {});
+                
+                // Load orders - fetch from API
+                const ordersResponse = await fetch(`${API}/orders?userId=${userId}`);
+                if (ordersResponse.ok) {
+                    const orders = await ordersResponse.json();
+                    loadOrders(orders);
+                }
+
+                // Load wishlist items
+                const wishlist = userObject.wishlist || [];
+                if (wishlist.length > 0) {
+                    // Fetch full product details for each wishlist item
+                    const wishlistProducts = await Promise.all(
+                        wishlist.map(async item => {
+                            const response = await fetch(`${API}/products/${item.id}`);
+                            if (!response.ok) throw new Error(`Failed to fetch product ${item.id}`);
+                            return response.json();
+                        })
+                    );
+                    loadWishlist(wishlistProducts);
+                } else {
+                    loadWishlist([]);
+                }
+
+                // Update wishlist count in navbar
+                const { wishlistItemUpdate } = await import('./components/navbar.js');
+                wishlistItemUpdate();
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                alert('Failed to load profile data. Please try again.');
+            }
+        }
+
+        function loadAddresses(address) {
+            const addressList = document.getElementById('addressList');
+            if (!address || Object.keys(address).length === 0) {
+                addressList.innerHTML = '<p class="no-data">No addresses added yet</p>';
+                return;
+            }
+
+            addressList.innerHTML = `
+                <div class="address-card">
+                    <h3>${address.fullname || ''}</h3>
+                    <p>${address.full_address || ''}</p>
+                    <p>${address.locality || ''}, ${address.district || ''}</p>
+                    <p>${address.state || ''} ${address.pin_code ? '- ' + address.pin_code : ''}</p>
+                    <p>Phone: ${address.mobile_no || ''}</p>
+                    <div class="address-actions">
+                        <button onclick="editAddress('${JSON.stringify(address).replace(/"/g, '&quot;')}')">Edit</button>
+                        <button onclick="deleteAddress()">Delete</button>
+                    </div>
+                        </div>
+            `;
+        }
+
+        function loadOrders(orders) {
+            const ordersList = document.getElementById('ordersList');
+            if (!orders || orders.length === 0) {
+                ordersList.innerHTML = '<div class="no-data">No orders found</div>';
+                return;
+            }
+
+            ordersList.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <h3>Order #${order.id}</h3>
+                        <span class="status ${order.status?.toLowerCase()}">${order.status || 'Processing'}</span>
+                    </div>
+                    <div class="order-details">
+                        <p>Date: ${new Date(order.date || Date.now()).toLocaleDateString()}</p>
+                        <p>Total: ₹${order.total || order.amount || 0}</p>
+                    </div>
+                    <div class="order-items">
+                        ${order.items ? order.items.map(item => `
+                            <div class="order-item">
+                                <img src="${item.image || 'https://via.placeholder.com/50'}" alt="${item.name}">
+                                <div class="item-details">
+                                    <h4>${item.name}</h4>
+                                    <p>Quantity: ${item.quantity}</p>
+                                    <p>Price: ₹${item.price}</p>
+                                </div>
+                            </div>
+                        `).join('') : '<p>No items found</p>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadWishlist(products) {
+            const wishlistItems = document.getElementById('wishlistItems');
+            if (!products || products.length === 0) {
+                wishlistItems.innerHTML = '<div class="no-data">Your wishlist is empty</div>';
+                return;
+            }
+
+            wishlistItems.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <img src="${product.image || 'https://via.placeholder.com/150'}" alt="${product.name}">
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <div class="rating">
+                            ${getRatingStars(product.rating)}
+                            <span>(${product.rating})</span>
+                        </div>
+                        <div class="price">
+                            <p class="original">₹${product.original_price}</p>
+                            <p class="discounted">₹${product.discounted_price}</p>
+                            <p class="discount">${Math.round(((product.original_price - product.discounted_price) / product.original_price) * 100)}% OFF</p>
+                        </div>
+                        <div class="product-actions">
+                            <button onclick="addToCart('${product.id}')" class="btn-primary">Add to Cart</button>
+                            <button onclick="removeFromWishlist('${product.id}')" class="btn-secondary">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getRatingStars(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    stars += '<i class="fa-solid fa-star" style="color: rgb(243,182,9);"></i>';
+                } else {
+                    stars += '<i class="fa-regular fa-star fa-sm" style="color: rgb(0, 0, 0, 0.6);"></i>';
+                }
+            }
+            return stars;
+        }
+
+        function setupEventListeners() {
+            // Edit personal info button
+            document.getElementById('editPersonalInfo').addEventListener('click', () => {
+                const form = document.getElementById('personalInfoForm');
+                const inputs = form.querySelectorAll('input');
+                const submitButton = form.querySelector('button[type="submit"]');
+                
+                inputs.forEach(input => {
+                    input.disabled = !input.disabled;
+                });
+                submitButton.disabled = !submitButton.disabled;
+            });
+
+            // Form submission
+            document.getElementById('personalInfoForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                try {
+                    const userId = localStorage.getItem('userid');
+                    if (!userId) {
+                        throw new Error('User ID not found');
+                    }
+
+                    const formData = {
+                        name: document.getElementById('fullName').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value
+                    };
+
+                    if (document.getElementById('password').value) {
+                        formData.password = document.getElementById('password').value;
+                    }
+
+                    const response = await fetch(`${API}/users/${userId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update profile');
+                    }
+
+                    const updatedUser = await response.json();
+                    localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                    
+                    alert('Profile updated successfully!');
+                    loadUserData();
+                    
+                    // Reset form state
+                    const form = document.getElementById('personalInfoForm');
+                    const inputs = form.querySelectorAll('input');
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    inputs.forEach(input => input.disabled = true);
+                    submitButton.disabled = true;
+                    document.getElementById('password').value = '';
+                    
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    alert('Failed to update profile. Please try again.');
+                }
+            });
+        }
+
+        window.showSection = function(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.profile-nav li').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.profile-nav li[onclick="showSection('${sectionId}')"]`).classList.add('active');
+        };
+
+        window.logout = function() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userid');
+                localStorage.removeItem('logged');
+                localStorage.removeItem('userObject');
+                window.location.href = './signin.html';
+            }
+        };
+
+        window.editAddress = async function(addressData) {
+            try {
+                const address = JSON.parse(addressData);
+                const addressList = document.getElementById('addressList');
+                addressList.innerHTML = `
+                    <form id="address-form" class="address-form">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="addr-fullname" value="${address.fullname || ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number</label>
+                            <input type="tel" id="addr-mobile" value="${address.mobile_no || ''}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Address</label>
+                            <textarea id="addr-full" required>${address.full_address || ''}</textarea>
+                        </div>
+                            <div class="form-group">
+                            <label>Locality</label>
+                            <input type="text" id="addr-locality" value="${address.locality || ''}" required>
+                            </div>
+                        <div class="form-group">
+                            <label>District</label>
+                            <input type="text" id="addr-district" value="${address.district || ''}" required>
+                                </div>
+                        <div class="form-group">
+                            <label>State</label>
+                            <input type="text" id="addr-state" value="${address.state || ''}" required>
+                                </div>
+                        <div class="form-group">
+                            <label>PIN Code</label>
+                            <input type="text" id="addr-pincode" value="${address.pin_code || ''}" required>
+                            </div>
+                        <div class="form-actions">
+                            <button type="submit">Save Address</button>
+                            <button type="button" onclick="loadUserData()">Cancel</button>
+                        </div>
+                    </form>
+                `;
+
+                document.getElementById('address-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const userId = localStorage.getItem('userid');
+                    if (!userId) {
+                        throw new Error('User not found');
+                    }
+
+                    const newAddress = {
+                        fullname: document.getElementById('addr-fullname').value,
+                        mobile_no: document.getElementById('addr-mobile').value,
+                        full_address: document.getElementById('addr-full').value,
+                        locality: document.getElementById('addr-locality').value,
+                        district: document.getElementById('addr-district').value,
+                        state: document.getElementById('addr-state').value,
+                        pin_code: document.getElementById('addr-pincode').value
+                    };
+
+                    const response = await fetch(`${API}/users/${userId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ address: newAddress })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update address');
+                    }
+
+                    const updatedUser = await response.json();
+                    localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                    alert('Address updated successfully!');
+                    loadUserData();
+                });
+            } catch (error) {
+                console.error('Error updating address:', error);
+                alert('Failed to update address. Please try again.');
+            }
+        };
+
+        window.deleteAddress = async function() {
+            if (!confirm('Are you sure you want to delete this address?')) return;
+            
+            try {
+                const userId = localStorage.getItem('userid');
+                if (!userId) {
+                    throw new Error('User not found');
+                }
+
+                const response = await fetch(`${API}/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        address: {} 
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete address');
+                }
+
+                const updatedUser = await response.json();
+                localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                alert('Address deleted successfully!');
+                loadUserData();
+            } catch (error) {
+                console.error('Error deleting address:', error);
+                alert('Failed to delete address. Please try again.');
+            }
+        };
+
+        window.addToCart = async function(productId) {
+            try {
+                const userId = localStorage.getItem('userid');
+                if (!userId) {
+                    throw new Error('User not found');
+                }
+
+                const userObject = JSON.parse(localStorage.getItem('userObject'));
+                const cart = userObject.cart || [];
+                cart.push({ id: productId, quantity: 1 });
+
+                const response = await fetch(`${API}/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ cart })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add to cart');
+                }
+
+                const updatedUser = await response.json();
+                localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                alert('Product added to cart!');
+                loadUserData();
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert('Failed to add to cart. Please try again.');
+            }
+        };
+
+        window.removeFromWishlist = async function(productId) {
+            try {
+                const userId = localStorage.getItem('userid');
+                if (!userId) {
+                    throw new Error('User not found');
+                }
+
+                const userObject = JSON.parse(localStorage.getItem('userObject'));
+                const wishlist = (userObject.wishlist || []).filter(item => item.id !== productId);
+
+                const response = await fetch(`${API}/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ wishlist })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to remove from wishlist');
+                }
+
+                const updatedUser = await response.json();
+                localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                
+                // Reload wishlist
+                const wishlistProducts = await Promise.all(
+                    wishlist.map(async item => {
+                        const response = await fetch(`${API}/products/${item.id}`);
+                        if (!response.ok) throw new Error(`Failed to fetch product ${item.id}`);
+                        return response.json();
+                    })
+                );
+                loadWishlist(wishlistProducts);
+
+                // Update wishlist count in navbar
+                const { wishlistItemUpdate } = await import('./components/navbar.js');
+                wishlistItemUpdate();
+
+                alert('Product removed from wishlist!');
+            } catch (error) {
+                console.error('Error removing from wishlist:', error);
+                alert('Failed to remove from wishlist. Please try again.');
+            }
+        };
+
+        window.showAddAddressForm = function() {
+            const addressList = document.getElementById('addressList');
+            addressList.innerHTML = `
+                <form id="new-address-form" class="address-form">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="addr-fullname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" id="addr-mobile" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Full Address</label>
+                        <textarea id="addr-full" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Locality</label>
+                        <input type="text" id="addr-locality" required>
+                    </div>
+                    <div class="form-group">
+                        <label>District</label>
+                        <input type="text" id="addr-district" required>
+                </div>
+                    <div class="form-group">
+                        <label>State</label>
+                        <input type="text" id="addr-state" required>
+            </div>
+                    <div class="form-group">
+                        <label>PIN Code</label>
+                        <input type="text" id="addr-pincode" required>
+        </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save Address</button>
+                        <button type="button" onclick="loadUserData()" class="btn-secondary">Cancel</button>
+    </div>
+                </form>
+            `;
+
+            document.getElementById('new-address-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    const userId = localStorage.getItem('userid');
+                    if (!userId) {
+                        throw new Error('User not found');
+                    }
+
+                    const newAddress = {
+                        fullname: document.getElementById('addr-fullname').value,
+                        mobile_no: document.getElementById('addr-mobile').value,
+                        full_address: document.getElementById('addr-full').value,
+                        locality: document.getElementById('addr-locality').value,
+                        district: document.getElementById('addr-district').value,
+                        state: document.getElementById('addr-state').value,
+                        pin_code: document.getElementById('addr-pincode').value
+                    };
+
+                    const response = await fetch(`${API}/users/${userId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ address: newAddress })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to add address');
+                    }
+
+                    const updatedUser = await response.json();
+                    localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                    alert('Address added successfully!');
+                    loadUserData();
+                } catch (error) {
+                    console.error('Error adding address:', error);
+                    alert('Failed to add address. Please try again.');
+                }
+            });
+        };
+
+        window.toggleMerchantMode = async function(enabled) {
+            try {
+                const userId = localStorage.getItem('userid');
+                if (!userId) {
+                    throw new Error('User not found');
+                }
+
+                const response = await fetch(`${API}/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ isMerchant: enabled })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update merchant status');
+                }
+
+                const updatedUser = await response.json();
+                localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                
+                // Update merchant panel visibility
+                document.getElementById('merchantPanel').style.display = enabled ? 'block' : 'none';
+                
+                // Refresh navbar to show/hide sell button
+                const navbar = document.getElementById('navbar');
+                navbar.innerHTML = top_navbar() + middle_navbar() + bottom_navbar();
+                
+                if (enabled) {
+                    alert('Merchant mode activated! You can now sell products.');
+                } else {
+                    alert('Merchant mode deactivated.');
+                }
+            } catch (error) {
+                console.error('Error toggling merchant mode:', error);
+                alert('Failed to update merchant status. Please try again.');
+                // Reset the toggle if there was an error
+                document.getElementById('merchantMode').checked = !enabled;
+            }
+        };
+
+        // Initialize merchant mode on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const userObject = JSON.parse(localStorage.getItem('userObject')) || {};
+            if (userObject.isMerchant) {
+                document.getElementById('merchantMode').checked = true;
+                document.getElementById('merchantPanel').style.display = 'block';
+            }
+        });
+
+        window.saveSettings = async function() {
+            try {
+                const userId = localStorage.getItem('userid');
+                if (!userId) {
+                    throw new Error('User not found');
+                }
+
+                const settings = {
+                    notifications: document.getElementById('notifications').checked,
+                    theme: document.getElementById('theme').value,
+                    isMerchant: document.getElementById('merchantMode').checked
+                };
+
+                const response = await fetch(`${API}/users/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ settings })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save settings');
+                }
+
+                const updatedUser = await response.json();
+                localStorage.setItem('userObject', JSON.stringify(updatedUser));
+                alert('Settings saved successfully!');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Failed to save settings. Please try again.');
+            }
+        };
+    </script>
+</body>
+</html> 

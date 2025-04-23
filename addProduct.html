@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - Auto-Tech Hub</title>
+    <link rel="stylesheet" href="./styles/navbar.css">
+    <link rel="stylesheet" href="./styles/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: rgb(243,182,9);
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button[type="submit"] {
+            background-color: rgb(243,182,9);
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: rgb(223,162,0);
+        }
+
+        .success-message {
+            display: none;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 15px;
+            }
+        }
+
+        .image-upload-container {
+            margin-top: 10px;
+        }
+
+        .image-preview {
+            margin-top: 10px;
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .image-preview-grid {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .preview-item {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .invalid-image {
+            border-color: #ff4d4d;
+        }
+
+        .valid-image {
+            border-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div class="container">
+        <div class="form-header">
+            <h1>Add New Product</h1>
+            <p>Fill in the details to add a new product to your inventory</p>
+        </div>
+        <form id="productForm">
+            <div class="form-group">
+                <label for="title">Product Title</label>
+                <input type="text" id="title" placeholder="Enter product title" required />
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" required></select>
+            </div>
+
+            <div class="form-group">
+                <label for="oprice">Original Price (₹)</label>
+                <input type="number" id="oprice" placeholder="Enter original price" required />
+            </div>
+
+            <div class="form-group">
+                <label for="dprice">Discounted Price (₹)</label>
+                <input type="number" id="dprice" placeholder="Enter discounted price" required />
+            </div>
+
+            <div class="form-group">
+                <label for="main_image">Main Image</label>
+                <div class="image-upload-container">
+                    <input type="url" id="main_image" placeholder="Enter main image URL" required />
+                    <div class="image-preview" id="main-image-preview">
+                        <img src="https://via.placeholder.com/150" alt="Preview" id="main-preview-img">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="small_urls">Additional Images</label>
+                <div class="image-upload-container">
+                    <input type="text" id="small_urls" placeholder="Enter additional image URLs (comma-separated)" />
+                    <div class="image-preview-grid" id="additional-images-preview"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="rating">Rating (0-5)</label>
+                <input type="number" id="rating" min="0" max="5" step="0.1" placeholder="Enter product rating" required />
+            </div>
+
+            <div class="form-group">
+                <label for="rcount">Rating Count</label>
+                <input type="number" id="rcount" placeholder="Enter number of ratings" required />
+            </div>
+
+            <div class="form-group">
+                <label for="highlights">Product Highlights</label>
+                <textarea id="highlights" placeholder="Enter product highlights in HTML format" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="specs">Product Specifications</label>
+                <textarea id="specs" placeholder="Enter product specifications" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Product Description</label>
+                <textarea id="description" placeholder="Enter detailed product description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="terms">Terms and Conditions</label>
+                <textarea id="terms" required>The images represent actual product though color of the image and product may slightly differ.
+For warranty-related claims, please contact the brand service centre.</textarea>
+            </div>
+
+            <button type="submit">Add Product</button>
+        </form>
+        <div id="successMessage" class="success-message">
+            Product added successfully!
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <script type="module">
+        import API from "/components/api.js";
+        import { top_navbar, middle_navbar, bottom_navbar } from '/components/navbar.js';
+        import { getFooter } from '/components/footer.js';
+
+        // Image preview functionality
+        function setupImagePreviews() {
+            const mainImageInput = document.getElementById('main_image');
+            const mainPreviewImg = document.getElementById('main-preview-img');
+            const mainPreviewContainer = document.getElementById('main-image-preview');
+
+            mainImageInput.addEventListener('input', function() {
+                validateAndPreviewImage(this.value, mainPreviewImg, mainPreviewContainer);
+            });
+
+            const smallUrlsInput = document.getElementById('small_urls');
+            const additionalPreviewContainer = document.getElementById('additional-images-preview');
+
+            smallUrlsInput.addEventListener('input', function() {
+                const urls = this.value.split(',').map(url => url.trim()).filter(url => url);
+                additionalPreviewContainer.innerHTML = '';
+                
+                urls.forEach(url => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = 'https://via.placeholder.com/100';
+                    previewItem.appendChild(img);
+                    additionalPreviewContainer.appendChild(previewItem);
+                    
+                    validateAndPreviewImage(url, img, previewItem);
+                });
+            });
+        }
+
+        function validateAndPreviewImage(url, imgElement, containerElement) {
+            if (!url) {
+                imgElement.src = 'https://via.placeholder.com/150';
+                containerElement.classList.remove('valid-image', 'invalid-image');
+                return;
+            }
+
+            const img = new Image();
+            img.onload = function() {
+                imgElement.src = url;
+                containerElement.classList.add('valid-image');
+                containerElement.classList.remove('invalid-image');
+            };
+            img.onerror = function() {
+                imgElement.src = 'https://via.placeholder.com/150';
+                containerElement.classList.add('invalid-image');
+                containerElement.classList.remove('valid-image');
+            };
+            img.src = url;
+        }
+
+        // Initialize the page
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is a merchant
+            const userObject = JSON.parse(localStorage.getItem('userObject')) || {};
+            if (!userObject.isMerchant) {
+                alert('Access denied. Only merchants can add products.');
+                window.location.href = '/profile.html';
+                return;
+            }
+
+            // Load navbar and footer
+            const navbar = document.getElementById('navbar');
+            navbar.innerHTML = top_navbar() + middle_navbar() + bottom_navbar();
+
+            const footer = document.getElementById('footer');
+            footer.innerHTML = getFooter();
+
+            // Setup image previews
+            setupImagePreviews();
+
+            // Load categories
+            try {
+                const response = await fetch(`${API}/category`);
+                const categories = await response.json();
+                const select = document.querySelector("#category");
+                
+                categories.forEach(element => {
+                    const option = document.createElement('option');
+                    let category = element.name + "";
+                    option.value = category.toLowerCase();
+                    option.textContent = category;
+                    select.append(option);
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        });
+
+        document.getElementById("productForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            
+            // Validate images before submission
+            const mainImageUrl = document.getElementById('main_image').value;
+            const smallUrls = document.getElementById('small_urls').value
+                .split(',')
+                .map(url => url.trim())
+                .filter(url => url);
+
+            try {
+                // Validate main image
+                await validateImageUrl(mainImageUrl);
+                
+                // Validate additional images
+                await Promise.all(smallUrls.map(validateImageUrl));
+
+                const formData = {
+                    image_url: mainImageUrl,
+                    name: event.target.title.value,
+                    category: event.target.category.value,
+                    discounted_price: +event.target.dprice.value,
+                    original_price: +event.target.oprice.value,
+                    small_images: smallUrls,
+                    rating: +event.target.rating.value,
+                    rating_count: +event.target.rcount.value,
+                    description: {
+                        highlights: event.target.highlights.value,
+                        other_specs: event.target.specs.value,
+                        description: event.target.description.value,
+                        terms_conditon: event.target.terms.value,
+                    }
+                };
+
+                const response = await fetch(`${API}/products`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to add product');
+                }
+
+                const successMessage = document.getElementById('successMessage');
+                successMessage.style.display = 'block';
+                event.target.reset();
+                
+                // Reset image previews
+                document.getElementById('main-preview-img').src = 'https://via.placeholder.com/150';
+                document.getElementById('additional-images-preview').innerHTML = '';
+                
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error adding product:', error);
+                alert(error.message || 'Failed to add product. Please check the image URLs and try again.');
+            }
+        });
+
+        // Helper function to validate image URLs
+        function validateImageUrl(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve();
+                img.onerror = () => reject(new Error(`Invalid image URL: ${url}`));
+                img.src = url;
+            });
+        }
+    </script>
+</body>
+</html>
